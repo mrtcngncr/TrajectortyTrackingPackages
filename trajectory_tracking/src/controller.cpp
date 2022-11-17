@@ -30,8 +30,8 @@ Controller::Controller(): Node("controller")
     angular_vel_max = 0.8;
 
     _sampling_time = 0.01;
-    _epsilon = 1.0;
-    _b = 1.5; 
+    _epsilon = 10.0;
+    _b = 10.0; 
     current_time = 0.0;
     timer_ = this->create_wall_timer(0.01s, std::bind(&Controller::timerTry, this));
 
@@ -69,14 +69,9 @@ void Controller::timerTry()
    RCLCPP_INFO(this->get_logger(), "Current Time is %f",current_time);
   
   getCurrentPose(current_pose);
-  _trajectory_handler.getReferanceTrajectoryAtTime(current_time ,referance_pose,ref_linear_vel,ref_angular_vel);
+  _trajectory_handler.getCircularReferanceTrajectoryAtTime(current_time ,referance_pose,ref_linear_vel,ref_angular_vel);
 
-  // _rotation_matrix =        {{ cos(current_pose(2,0)), sin(current_pose(2,0)), 0},
-  //                            {-sin(current_pose(2,0)), cos(current_pose(2,0)), 0},
-  //                            {           0           ,           0           , 1}};
-
-    
- 
+     
   _rotation_matrix(0,0) = cos(current_pose(2,0));
   _rotation_matrix(0,1) = sin(current_pose(2,0));
   _rotation_matrix(0,2) = 0;
@@ -92,6 +87,11 @@ void Controller::timerTry()
   std::cout << _rotation_matrix<< std::endl ;
 
   tracking_error =  _rotation_matrix* (referance_pose - current_pose);
+
+  if(abs(tracking_error(2,0))>(2*PI-0.5))
+  {
+    tracking_error(2,0) = -1*(tracking_error(2,0)/abs(tracking_error(2,0)))* (2*PI-abs(tracking_error(2,0)));
+  }
   RCLCPP_INFO(this->get_logger(), "Referance  Theta Is : %f",referance_pose(2,0));
   RCLCPP_INFO(this->get_logger(), "Current  Theta Is : %f",current_pose(2,0));
   RCLCPP_INFO(this->get_logger(), "Tracking Erorr Theta Is : %f",tracking_error(2,0));
@@ -104,10 +104,9 @@ void Controller::timerTry()
   double Ky = (_b*abs(ref_linear_vel));
   double Ktht = 2*_epsilon*_a;
   double set_angular_vel = ref_angular_vel + ((Ky*tracking_error(1,0)*sin(tracking_error(2,0)))/tracking_error(2,0)) + Ktht * tracking_error(2,0);
+  RCLCPP_INFO(this->get_logger(), "REF ANGULAR VEL IS %f",ref_angular_vel);
+  RCLCPP_INFO(this->get_logger(), "set ANGULAR VEL IS %f",set_angular_vel);
 
-
-  // RCLCPP_INFO(this->get_logger(), "SET_ANGULAR_VEL IS %f",set_angular_vel);
-  // RCLCPP_INFO(this->get_logger(), "SET_lin_VEL IS %f",set_linear_vel);
 
   saturateCommandVels(set_linear_vel,set_angular_vel);
   // RCLCPP_INFO(this->get_logger(), "SET_ANGULAR_VEL IS %f",set_angular_vel);
@@ -131,10 +130,10 @@ double Controller::quat2Yaw(geometry_msgs::msg::Quaternion quat)
         double roll, pitch, yaw;
         mat_.getRPY(roll, pitch, yaw);
 
-        if (yaw<0)
-        {
-          yaw = yaw + 2*3.14;
-        }
+        // if (yaw<0)
+        // {
+        //   yaw = yaw + 2*PI;
+        // }
         
         return yaw;
 

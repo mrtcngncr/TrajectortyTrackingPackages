@@ -27,7 +27,7 @@
 
 using Eigen::MatrixXd;
 using namespace std::chrono_literals;
-
+# define PI    3.141592653589793238462643383279502884L
 
 namespace trajectory_tracking
 {

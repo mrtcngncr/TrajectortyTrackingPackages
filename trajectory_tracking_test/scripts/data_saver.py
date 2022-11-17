@@ -4,8 +4,9 @@ import rclpy
 from rclpy.node import Node
 
 from std_msgs.msg import Float32MultiArray
-from geometry_msgs.msg import Vector3
+from geometry_msgs.msg import Vector3 ,Twist
 from std_srvs.srv import Trigger
+
 
 import csv
 from datetime import datetime
@@ -19,6 +20,7 @@ class DataSaver(Node):
         self.create_subscription(Float32MultiArray,"tracking_errors",self.save_error_data,10)
         self.create_subscription(Vector3,"robot_pose",self.save_robot_pose_data,10)
         self.create_subscription(Vector3,"desired_pose",self.save_desired_pose_data,10)
+        self.create_subscription(Twist,"cmd_vel",self.save_cmd_vel_data,10)
 
         self.create_service(Trigger,"save_data",self.save_data)
 
@@ -31,7 +33,10 @@ class DataSaver(Node):
                 "current_pose_y":[],
 
                 "desired_pose_x":[],
-                "desired_pose_y":[]
+                "desired_pose_y":[],
+
+                "linear_vel":[],
+                "angular_vel":[]
 
         }
     
@@ -49,6 +54,10 @@ class DataSaver(Node):
     def save_desired_pose_data(self,msg):
         self.data["desired_pose_x"].append(msg.x)
         self.data["desired_pose_y"].append(msg.y)
+
+    def save_cmd_vel_data(self,msg):
+        self.data["linear_vel"].append(msg.linear.x)
+        self.data["angular_vel"].append(msg.angular.z)
 
     def save_data(self,req,resp):
 
@@ -75,7 +84,7 @@ class DataSaver(Node):
 
             path += _folders + "/"
 
-        path += "src/trajectory_tracking_test/datas"
+        path += "src/TrajectortyTrackingPackages/trajectory_tracking_test/datas"
         
         return path
             

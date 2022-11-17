@@ -39,7 +39,10 @@ def import_data(data_name):
         "current_pose_x":df["current_pose_x"].tolist(),
         "current_pose_y":df["current_pose_y"].tolist(),
         "desired_pose_x":df["desired_pose_x"].tolist(),
-        "desired_pose_y":df["desired_pose_y"].tolist()
+        "desired_pose_y":df["desired_pose_y"].tolist(),
+        "linear_vel":df["linear_vel"].tolist(),
+        "angular_vel":df["angular_vel"].tolist()
+
 
     }
 
@@ -59,11 +62,8 @@ def print_errors(data):
     plt.plot(t,error_theta,  label="theta_error")
     plt.plot(t,error_x ,label="x_error")
     plt.plot(t,error_y, label= "y_error")
-
-
     plt.legend()
-    plt.show()
-
+  
 
 def create_time_array(data):
 
@@ -91,13 +91,28 @@ def print_poses(data):
     print(real_pose_x)
     plt.plot(real_pose_x,real_pose_y, label="robot_trajectory")
     plt.plot(desired_pose_x,desired_pose_y,label="desired_trajectory")
-
     plt.legend()
-    plt.show()
 
+    
 
-data = import_data("testresults2022-11-16 23:15:56.193248.csv")
+def print_vels(data):
+    plt.figure()
+
+    linear_vel = data["linear_vel"]
+    angular_vel = data["angular_vel"]
+    t = create_time_array(linear_vel)
+
+    plt.plot(t,linear_vel,label="linear_vel")
+    plt.plot(t,angular_vel,label="angular_vel")
+    plt.legend()
+    
+
+data = import_data("testresults2022-11-17 23:59:23.476804.csv")
 
 
 
 print_poses(data)
+print_errors(data)
+print_vels(data)
+
+plt.show()
