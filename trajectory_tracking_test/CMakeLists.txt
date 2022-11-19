@@ -7,11 +7,15 @@ endif()
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
+find_package(trajectory_tracking_msgs REQUIRED)
+find_package(trajectory_tracking REQUIRED)
+find_package(rclpy REQUIRED)
+find_package(rclcpp REQUIRED)
 
 install(
   PROGRAMS
     scripts/data_saver.py
-
+    scripts/controller_test.py
     
   DESTINATION
     lib/${PROJECT_NAME}/

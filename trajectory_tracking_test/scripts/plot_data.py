@@ -107,7 +107,7 @@ def print_vels(data):
     plt.legend()
     
 
-data = import_data("testresults2022-11-17 23:59:23.476804.csv")
+data = import_data("testresults2022-11-19 22:56:42.262156.csv")
 
 
 

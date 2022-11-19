@@ -8,10 +8,12 @@ endif()
 # find dependencies
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
+find_package(rclpy REQUIRED)
 find_package(Eigen3 REQUIRED)
 find_package(tf2_ros REQUIRED)
 find_package(geometry_msgs REQUIRED)
-
+find_package(trajectory_tracking_msgs REQUIRED)
+find_package(ament_cmake_python REQUIRED)
 
 
 
@@ -27,6 +29,7 @@ set(THIS_PACKAGE_INCLUDE_DEPENDS
   Eigen3
   tf2_ros
   geometry_msgs
+  trajectory_tracking_msgs
 )
 
 
@@ -35,5 +38,11 @@ ament_target_dependencies(controller ${THIS_PACKAGE_INCLUDE_DEPENDS} )
 install(TARGETS controller
   DESTINATION lib/${PROJECT_NAME}
 )
+
+
+
+ament_python_install_package(${PROJECT_NAME})
+ament_python_install_module(${PROJECT_NAME}/controller_interface.py)
+
 
 ament_package()

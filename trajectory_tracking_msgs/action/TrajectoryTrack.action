@@ -1,0 +1,6 @@
+trajectory_tracking_msgs/Trajectory trajectory
+float32 sampling_time
+---
+bool succes
+---
+float32 progress

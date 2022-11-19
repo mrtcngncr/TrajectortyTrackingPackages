@@ -57,7 +57,7 @@ void TrajectoryHandler::getCircularReferanceTrajectoryAtTime(double time , Matri
     _referance_pose(1,0) = _yc - _R*cos(_k*time);
     _referance_pose(2,0) = fmod(_k*time,2*PI);
     
-    if (_referance_pose(2,0)>PI);
+    if (_referance_pose(2,0)>PI)
     {
         _referance_pose(2,0) = -2*PI +_referance_pose(2,0) ;
     }
